@@ -15,6 +15,9 @@ export default {
 </script>
 
 <style>
+.home {
+    background-color: #252423;
+}
 .c-letters-wrapper {
     z-index: 50;
     position: fixed;

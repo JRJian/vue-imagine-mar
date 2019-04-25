@@ -13,7 +13,7 @@ export default {
 
 <style>
 #app {
-  font-family: Empirica Headline Regular Roman Extra-light;
+  font-family: -apple-system,BlinkMacSystemFont,segoe ui,roboto,oxygen,cantarell,helvetica neue,ubuntu,sans-serif;
   position: fixed;
   top: 0;
   left: 0;
@@ -21,9 +21,10 @@ export default {
   height: 100%;
   padding: 0;
   margin: 0;
+  background: transparent;
 }
 body {
-  background-color: #252423;
+  background-color: rgb(3, 31, 27);
 }
 ul, ol {
   list-style-type: none;

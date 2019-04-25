@@ -17,6 +17,10 @@ export default {
   computed: mapState("home", {
     flowImages: state => state.flowImages
   }),
+  methods: {
+    stopAnims: function(e) {
+    }
+  },
   mounted() {
     var durationT = 90000;
     var delayT = 4000;

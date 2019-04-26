@@ -62,13 +62,7 @@ export default {
     },
     mouseup: function(event) {
       var progress = this.animatingObjs[0].progress;
-      if (progress == 100) {
-        this.$refs.imageschild.stopAnims('')
-        var activeInstances = this.$anime.running
-        for (var i = 0; i < activeInstances.length; i++) {
-          activeInstancess[i].pause();
-        }
-      } else {
+      if (progress < 100) {
         for (var i = 0; i < this.animatingObjs.length; i++) {
           this.animatingObjs[i].reverse();
         }
@@ -78,6 +72,7 @@ export default {
   mounted() {
     var letters = document.querySelectorAll(".letters .c-loader-letter");
     var translateXs = ["0%", "-110%", "110%", "0%"];
+    var translateDismissXs = ["250%", "-260%", "260%", "250%"];
     for (var i = 0; i < translateXs.length; i++) {
       var letter = letters[i];
       letter.setAttribute("data-tx", translateXs[i]);
@@ -113,7 +108,13 @@ export default {
           return el.getAttribute("data-tx");
         },
         duration: 1500,
-        easing: "easeOutCirc"
+        easing: "easeOutCirc",
+        complete: function(anim) {
+          for (var i = 0; i < translateDismissXs.length; i++) {
+            var letter = letters[i];
+            letter.setAttribute("data-tx", translateDismissXs[i]);
+          }
+        }
       })
       .add({
         targets: ".letters .c-click-and-hold-wrapper",
@@ -122,14 +123,43 @@ export default {
         duration: 800,
         easing: "easeOutQuad"
       });
-
+    var completion = anim => {
+      var progress = anim.progress;
+      if (progress == 100) {
+        this.$refs.imageschild.stopAnims("");
+        this.$anime.timeline().add({
+          targets: ".letters .c-click-and-hold-wrapper",
+          opacity: 0,
+          scale: 0,
+          duration: 800,
+          easing: "easeOutQuad"
+        })
+        .add({
+          targets: ".letters .c-loader-letter",
+          translateY: el => {
+            return el.getAttribute("data-tx");
+          },
+          easing: "easeInOutQuart",
+          opacity: 0,
+          duration: 1000,
+          delay: 100
+        })
+        .add({
+          targets: '.letters .c-tagline-wrapper',
+          opacity: 0,
+          scale: 0,
+          duration: 1000,
+          easing: "easeInOutQuart"
+        }, '-=1000')
+      }
+    };
     this.animatingObjs.push(
       this.$anime({
         targets: "#progress",
         strokeDashoffset: {
           value: [-340, 0],
           easing: "easeInOutQuint",
-          duration: 1000
+          duration: 2000
         },
         autoplay: false
       })
@@ -152,7 +182,8 @@ export default {
         rotate: -5,
         duration: 1000,
         easing: "easeInOutQuint",
-        autoplay: false
+        autoplay: false,
+        complete: completion
       })
     );
   }

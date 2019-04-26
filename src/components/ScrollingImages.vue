@@ -11,14 +11,58 @@
 </template>
 <script>
 import { mapState } from "vuex";
+import common from '../common'
 
 export default {
   name: "scrollingImages",
+  data() {
+    return {
+      animatingObjs: []
+    };
+  },
   computed: mapState("home", {
     flowImages: state => state.flowImages
   }),
   methods: {
     stopAnims: function(e) {
+      for (var i = 0; i < this.animatingObjs.length; i++) {
+        this.animatingObjs[i].pause();
+      }
+      // 消失动画
+      var oddTargets = document.querySelectorAll(
+        ".scrolling-images .images-column:nth-child(odd)"
+      );
+      var evenTargets = document.querySelectorAll(
+        ".scrolling-images .images-column:nth-child(even)"
+      );
+      this.$anime.timeline().add({
+        targets: oddTargets,
+        translateY: '1%',
+        easing: "easeOutSine",
+        duration: 300
+      })
+      .add({
+        targets: oddTargets,
+        translateY: "75%",
+        easing: "easeInOutQuart",
+        opacity: 0.3,
+        duration: 1500,
+        delay: 100
+      })
+      this.$anime.timeline().add({
+        targets: evenTargets,
+        translateY: '-1%',
+        easing: "easeOutSine",
+        duration: 300
+      })
+      .add({
+        targets: evenTargets,
+        translateY: "-75%",
+        easing: "easeInOutQuart",
+        opacity: 0.3,
+        duration: 2500,
+        delay: 100
+      })
     }
   },
   mounted() {
@@ -45,24 +89,28 @@ export default {
       duration: 1000,
       delay: delayT
     });
-    this.$anime({
-      targets: oddTargets,
-      translateY: "50%",
-      easing: "linear",
-      duration: durationT,
-      delay: delayT,
-      loop: true,
-      direction: "alternate"
-    });
-    this.$anime({
-      targets: evenTargets,
-      translateY: "-50%",
-      easing: "linear",
-      duration: durationT,
-      delay: delayT,
-      loop: true,
-      direction: "alternate"
-    });
+    this.animatingObjs.push(
+      this.$anime({
+        targets: oddTargets,
+        translateY: "50%",
+        easing: "linear",
+        duration: durationT,
+        delay: delayT,
+        loop: true,
+        direction: "alternate"
+      })
+    )
+    this.animatingObjs.push(
+      this.$anime({
+        targets: evenTargets,
+        translateY: "-50%",
+        easing: "linear",
+        duration: durationT,
+        delay: delayT,
+        loop: true,
+        direction: "alternate"
+      })
+    )
   }
 };
 </script>
